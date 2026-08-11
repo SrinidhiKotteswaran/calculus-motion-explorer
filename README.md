@@ -1,100 +1,84 @@
 # Motion Explorer
 
-An interactive calculus laboratory for exploring derivatives, motion, numerical methods, and graphical analysis.
+An interactive calculus visualization tool built around the connection between derivatives and motion.
 
-**[Live Demo](https://calculus-motion-explorer-axfuj2ixr-srinidhi-kotteswaran.vercel.app/)**
+**Live site:** [calculus-motion-explorer-axfuj2ixr-srinidhi-kotteswaran.vercel.app](https://calculus-motion-explorer-axfuj2ixr-srinidhi-kotteswaran.vercel.app/)
 
-## What is Motion Explorer?
+## What it does
 
-Motion Explorer started as a small experiment: could I make calculus concepts easier to understand by connecting the mathematics to motion and interactive graphs?
+Motion Explorer lets you experiment with calculus instead of only working through symbolic problems.
 
-The first version focused primarily on position, velocity, tangent lines, and derivatives. I built that prototype in Python using Streamlit, SymPy, NumPy, and Plotly.
+The current version has six sections:
 
-After working with the prototype, I wanted to move beyond a single motion visualization. I wanted the project to become a more complete environment where someone could **explore, calculate, and investigate calculus** rather than simply view a graph.
-
-That led me to rebuild the application using **React and TypeScript**.
-
-## From Prototype to Current Version
-
-The change in technology was intentional.
-
-Python was useful for the initial prototype because it let me quickly experiment with symbolic mathematics, numerical calculations, and interactive graphs. Once the concept worked, however, I wanted more control over the browser interface, interactions, animations, and overall structure of the application.
-
-The current version is therefore not a separate project, but an expansion of the original idea.
-
-**Python prototype → React/TypeScript rebuild → interactive calculus laboratory**
-
-The original prototype is preserved here:
-
-**[View the Python Prototype](https://github.com/SrinidhiKotteswaran/calculus-motion-visualizer)**
-
-## What You Can Explore
-
-### Explore
-
-Investigate the relationship between position, velocity, acceleration, and higher derivatives through synchronized graphs and live measurements.
-
-### Secant → Tangent
-
-Visualize the definition of the derivative by watching a secant line approach a tangent line as the step size approaches zero.
-
-### Numerics
-
-Compare forward, backward, and central finite-difference methods and investigate how step size affects numerical error and floating-point behavior.
-
-### Analyze
-
-Explore critical points, increasing/decreasing intervals, concavity, and inflection points through automatically generated graphical and sign-chart analysis.
-
-### Integrate
-
-Visualize Riemann sums and compare numerical approximations with reference integrals while connecting accumulated area to displacement.
-
-### Challenge
-
-Work through procedurally generated calculus and motion problems involving derivatives and particle motion.
-
-## Why I Built It
-
-Calculus is often taught as a collection of rules for differentiating and integrating functions. I wanted to explore the ideas underneath those rules.
-
-Motion provides a natural connection:
-
-**position → velocity → acceleration → higher derivatives**
-
-From there, the project expanded into a broader question: what would a calculus environment look like if students could *see* the mathematical relationships they are normally asked to manipulate symbolically?
-
-Motion Explorer is my attempt at exploring that idea.
+* **Explore** — position, velocity, acceleration, and higher derivatives
+* **Secant → Tangent** — visualizes the difference quotient approaching the derivative
+* **Numerics** — compares numerical differentiation methods and their errors
+* **Analyze** — finds critical points, increasing/decreasing intervals, concavity, and inflection points
+* **Integrate** — visualizes Riemann sums and compares them with a reference integral
+* **Challenge** — generates calculus problems involving derivatives and motion
 
 ## Screenshots
 
 ### Explore
 
-![Explore mode](screenshots/explore.png)
+![Explore](screenshots/explore.png)
 
 ### Secant → Tangent
 
-![Secant to Tangent mode](screenshots/secant-tangent.png)
+![Secant → Tangent](screenshots/secant-tangent.png)
 
 ### Numerics
 
-![Numerics mode](screenshots/numerics.png)
+![Numerics](screenshots/numerics.png)
 
 ### Analyze
 
-![Analyze mode](screenshots/analyze.png)
+![Analyze](screenshots/analyze.png)
 
 ### Integrate
 
-![Integrate mode](screenshots/integrate.png)
+![Integrate](screenshots/integrate.png)
 
 ### Challenge
 
-![Challenge mode](screenshots/challenge.png)
+![Challenge](screenshots/challenge.png)
+
+## Why I made it
+
+I started this project because I wanted a better way to visualize what derivatives actually represent.
+
+The first prototype was much smaller. It was written in Python with Streamlit, SymPy, NumPy, and Plotly and focused mainly on position, velocity, tangent lines, and derivatives.
+
+That prototype was useful for figuring out the idea, but I eventually wanted more control over the interface and interactions. I also wanted to turn it into something that covered more of the calculus topics I was working with.
+
+I rebuilt the project in React and TypeScript and expanded it into the current version.
+
+### Prototype → current version
+
+**Original Python prototype:**
+[calculus-motion-visualizer](https://github.com/SrinidhiKotteswaran/calculus-motion-visualizer)
+
+**Current application:**
+React + TypeScript + Vite
+
+The two repositories are intentionally separate so the original prototype and the later rebuild can be compared.
+
+## Technical details
+
+The application is split into a few main pieces:
+
+* `src/lib/mathEngine.ts` — function parsing, evaluation, and symbolic differentiation
+* `src/lib/numerics.ts` — finite-difference calculations and numerical error
+* `src/lib/analysis.ts` — critical points, intervals, and concavity
+* `src/components/Graph.tsx` — graph rendering
+* `src/components/ExploreMode.tsx` — motion visualization
+* `src/components/SecantTangentMode.tsx` — secant/tangent visualization
+* `src/components/NumericsMode.tsx` — numerical differentiation
+* `src/components/AnalyzeMode.tsx` — derivative and concavity analysis
+* `src/components/IntegrateMode.tsx` — Riemann sums
+* `src/components/ChallengeMode.tsx` — generated problems
 
 ## Technology
-
-**Current version**
 
 * React
 * TypeScript
@@ -102,7 +86,7 @@ Motion Explorer is my attempt at exploring that idea.
 * Tailwind CSS
 * KaTeX
 
-**Original prototype**
+The original prototype used:
 
 * Python
 * Streamlit
@@ -110,28 +94,18 @@ Motion Explorer is my attempt at exploring that idea.
 * NumPy
 * Plotly
 
-## Project Structure
+## A few things I wanted to investigate
 
-The current application separates the mathematical engine from the interface:
+One of the parts I found most interesting was numerical differentiation.
 
-* `src/lib/mathEngine.ts` — expression parsing and symbolic differentiation
-* `src/lib/numerics.ts` — numerical differentiation and error analysis
-* `src/lib/analysis.ts` — critical points, intervals, and concavity
-* `src/components/ExploreMode.tsx` — motion visualization
-* `src/components/SecantTangentMode.tsx` — derivative limit visualization
-* `src/components/NumericsMode.tsx` — numerical differentiation laboratory
-* `src/components/AnalyzeMode.tsx` — calculus analysis tools
-* `src/components/IntegrateMode.tsx` — Riemann-sum visualization
-* `src/components/ChallengeMode.tsx` — generated calculus problems
+For example, the current Numerics section compares forward, backward, and central differences and plots error over different step sizes. Making `h` smaller does not indefinitely make the approximation better: eventually floating-point effects become important.
+
+The Secant → Tangent section approaches the derivative from another direction, showing the difference quotient as `h` becomes smaller.
+
+These were some of the ideas that pushed the project beyond the original motion-only prototype.
 
 ## Development
 
-This project was developed iteratively, beginning with a small Python prototype and evolving into the current browser-based application.
+This project is still an ongoing experiment. The current version grew out of the original Python prototype rather than being planned as a finished application from the beginning.
 
-The prototype helped establish the core concept. Rebuilding it allowed me to rethink the interface, expand the mathematical tools, and experiment with a more modular architecture.
-
-The goal was not simply to make a calculator, but to make the underlying relationships in calculus easier to investigate.
-
-## License
-
-This project is intended primarily as an educational and portfolio project.
+I am continuing to use the project to learn more about numerical methods, interactive visualization, and building mathematical software for the web.
