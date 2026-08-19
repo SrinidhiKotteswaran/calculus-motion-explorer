@@ -6,6 +6,7 @@ import { fileURLToPath, URL } from 'node:url';
 export default defineConfig({
   plugins: [react()],
   resolve: {
+    // Match the TypeScript @/* alias so imports stay stable as the app grows.
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
