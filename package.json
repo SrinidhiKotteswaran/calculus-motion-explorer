@@ -1,7 +1,8 @@
 {
-  "name": "vite-react-typescript-starter",
+  "name": "calculus-motion-explorer",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
+  "description": "Interactive calculus visualizations for derivatives, motion, numerical methods, analysis, and integration.",
   "type": "module",
   "scripts": {
     "dev": "vite",
