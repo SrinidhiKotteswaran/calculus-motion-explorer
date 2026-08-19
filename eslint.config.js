@@ -10,6 +10,7 @@ export default tseslint.config(
     extends: [js.configs.recommended, ...tseslint.configs.recommended],
     files: ['**/*.{ts,tsx}'],
     languageOptions: {
+      // Keep browser globals available to the React application and Vite client code.
       ecmaVersion: 2020,
       globals: globals.browser,
     },
