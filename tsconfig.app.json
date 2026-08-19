@@ -20,7 +20,7 @@
       "@/*": ["src/*"]
     },
 
-    /* Linting */
+    /* Keep the application type-safe while allowing intentionally unused UI helpers. */
     "strict": true,
     "noUnusedLocals": false,
     "noUnusedParameters": false,
