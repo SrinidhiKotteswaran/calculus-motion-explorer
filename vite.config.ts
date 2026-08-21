@@ -12,6 +12,7 @@ export default defineConfig({
     },
   },
   optimizeDeps: {
+    // Keep the icon package out of dependency pre-bundling for the current Vite setup.
     exclude: ['lucide-react'],
   },
 });
