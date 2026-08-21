@@ -1,4 +1,5 @@
 {
+  // The root config only coordinates the application and Vite-specific projects.
   "files": [],
   "references": [
     { "path": "./tsconfig.app.json" },

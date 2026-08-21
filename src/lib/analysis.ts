@@ -23,53 +23,60 @@ export interface ConcavityInterval {
   concavity: 'up' | 'down' | 'none';
 }
 
-// Find roots of fn(t) = 0 in [a, b] using bisection + sign change detection
 export function findRoots(fn: (t: number) => number, a: number, b: number, steps = 5000): number[] {
+  if (!Number.isFinite(a) || !Number.isFinite(b) || a >= b) {
+    throw new Error('Root-search interval must have finite bounds with a < b.');
+  }
+  if (!Number.isInteger(steps) || steps <= 0) {
+    throw new Error('Root-search steps must be a positive integer.');
+  }
+
   const roots: number[] = [];
   const dt = (b - a) / steps;
   let prevT = a;
   let prevVal = fn(a);
 
+  const addRoot = (root: number) => {
+    if (Number.isFinite(root) && !roots.some((r) => Math.abs(r - root) < dt * 2)) {
+      roots.push(root);
+    }
+  };
+
+  if (Number.isFinite(prevVal) && Math.abs(prevVal) < 1e-10) addRoot(a);
+
   for (let i = 1; i <= steps; i++) {
     const t = a + i * dt;
     const val = fn(t);
 
-    if (isNaN(prevVal) || isNaN(val) || !isFinite(prevVal) || !isFinite(val)) {
+    if (!Number.isFinite(prevVal) || !Number.isFinite(val)) {
       prevT = t;
       prevVal = val;
       continue;
     }
 
-    // Sign change => root
+    if (Math.abs(val) < 1e-10) addRoot(t);
+
     if (prevVal * val < 0) {
       const root = bisect(fn, prevT, t, 100);
-      if (root !== null && !roots.some((r) => Math.abs(r - root) < dt * 2)) {
-        roots.push(root);
-      }
-    }
-    // Near-zero (touching axis)
-    else if (Math.abs(val) < 1e-10 && Math.abs(prevVal) < 1e-10) {
-      const root = (prevT + t) / 2;
-      if (!roots.some((r) => Math.abs(r - root) < dt * 2)) {
-        roots.push(root);
-      }
+      if (root !== null) addRoot(root);
     }
 
     prevT = t;
     prevVal = val;
   }
 
-  return roots;
+  return roots.sort((x, y) => x - y);
 }
 
 function bisect(fn: (t: number) => number, a: number, b: number, maxIter: number): number | null {
   let fa = fn(a);
   let fb = fn(b);
-  if (fa * fb > 0) return null;
+  if (!Number.isFinite(fa) || !Number.isFinite(fb) || fa * fb > 0) return null;
 
   for (let i = 0; i < maxIter; i++) {
     const mid = (a + b) / 2;
     const fm = fn(mid);
+    if (!Number.isFinite(fm)) return null;
     if (Math.abs(fm) < 1e-12 || (b - a) < 1e-12) return mid;
     if (fa * fm < 0) {
       b = mid;
@@ -94,11 +101,10 @@ export function findCriticalPoints(
     const value = fn(t);
     const d2 = secondDeriv(t);
     let type: 'max' | 'min' | 'neither' = 'neither';
-    if (!isNaN(d2) && isFinite(d2)) {
+    if (Number.isFinite(d2)) {
       if (d2 < -1e-10) type = 'max';
       else if (d2 > 1e-10) type = 'min';
       else {
-        // Fall back to sign change of derivative
         const dLeft = deriv(t - 0.001);
         const dRight = deriv(t + 0.001);
         if (dLeft > 0 && dRight < 0) type = 'max';
@@ -118,10 +124,9 @@ export function findInflectionPoints(
   const roots = findRoots(secondDeriv, a, b);
   return roots
     .filter((t) => {
-      // Verify sign change in second derivative
       const left = secondDeriv(t - 0.001);
       const right = secondDeriv(t + 0.001);
-      return left * right < 0;
+      return Number.isFinite(left) && Number.isFinite(right) && left * right < 0;
     })
     .map((t) => ({ t, value: fn(t) }));
 }
@@ -132,7 +137,7 @@ export function findIncreasingDecreasing(
   b: number
 ): Interval[] {
   const roots = findRoots(deriv, a, b);
-  const breakpoints = [a, ...roots.sort((x, y) => x - y), b];
+  const breakpoints = [a, ...roots, b];
   const intervals: Interval[] = [];
 
   for (let i = 0; i < breakpoints.length - 1; i++) {
@@ -140,14 +145,10 @@ export function findIncreasingDecreasing(
     const end = breakpoints[i + 1];
     const mid = (start + end) / 2;
     const val = deriv(mid);
-    if (isNaN(val) || !isFinite(val)) continue;
-    if (val > 0) {
-      intervals.push({ start, end, sign: 'positive', behavior: 'increasing' });
-    } else if (val < 0) {
-      intervals.push({ start, end, sign: 'negative', behavior: 'decreasing' });
-    } else {
-      intervals.push({ start, end, sign: 'zero', behavior: 'stationary' });
-    }
+    if (!Number.isFinite(val)) continue;
+    if (val > 0) intervals.push({ start, end, sign: 'positive', behavior: 'increasing' });
+    else if (val < 0) intervals.push({ start, end, sign: 'negative', behavior: 'decreasing' });
+    else intervals.push({ start, end, sign: 'zero', behavior: 'stationary' });
   }
 
   return intervals;
@@ -159,7 +160,7 @@ export function findConcavity(
   b: number
 ): ConcavityInterval[] {
   const roots = findRoots(secondDeriv, a, b);
-  const breakpoints = [a, ...roots.sort((x, y) => x - y), b];
+  const breakpoints = [a, ...roots, b];
   const intervals: ConcavityInterval[] = [];
 
   for (let i = 0; i < breakpoints.length - 1; i++) {
@@ -167,14 +168,10 @@ export function findConcavity(
     const end = breakpoints[i + 1];
     const mid = (start + end) / 2;
     const val = secondDeriv(mid);
-    if (isNaN(val) || !isFinite(val)) continue;
-    if (val > 0) {
-      intervals.push({ start, end, concavity: 'up' });
-    } else if (val < 0) {
-      intervals.push({ start, end, concavity: 'down' });
-    } else {
-      intervals.push({ start, end, concavity: 'none' });
-    }
+    if (!Number.isFinite(val)) continue;
+    if (val > 0) intervals.push({ start, end, concavity: 'up' });
+    else if (val < 0) intervals.push({ start, end, concavity: 'down' });
+    else intervals.push({ start, end, concavity: 'none' });
   }
 
   return intervals;
@@ -197,22 +194,13 @@ export function classifyMotion(
   const stopped = Math.abs(velocity) < 1e-10;
   const accelPositive = acceleration > 0;
 
-  if (stopped) {
-    return { direction: 'stopped', speed: 'stopped', interpretation: 'Instantaneously at rest' };
-  }
-  if (movingForward && accelPositive) {
-    return { direction: 'forward', speed: 'up', interpretation: 'Forward, speeding up' };
-  }
-  if (movingForward && !accelPositive) {
-    return { direction: 'forward', speed: 'down', interpretation: 'Forward, slowing down' };
-  }
-  if (movingBackward && accelPositive) {
-    return { direction: 'backward', speed: 'down', interpretation: 'Backward, slowing down' };
-  }
+  if (stopped) return { direction: 'stopped', speed: 'stopped', interpretation: 'Instantaneously at rest' };
+  if (movingForward && accelPositive) return { direction: 'forward', speed: 'up', interpretation: 'Forward, speeding up' };
+  if (movingForward && !accelPositive) return { direction: 'forward', speed: 'down', interpretation: 'Forward, slowing down' };
+  if (movingBackward && accelPositive) return { direction: 'backward', speed: 'down', interpretation: 'Backward, slowing down' };
   return { direction: 'backward', speed: 'up', interpretation: 'Backward, speeding up' };
 }
 
-// Procedural problem generation
 export interface Problem {
   functionStr: string;
   question: string;
@@ -223,45 +211,40 @@ export interface Problem {
 }
 
 export function generateProblem(): Problem {
-  const templates = [
-    () => {
-      const a = randInt(-3, 3, [0]);
-      const b = randInt(-5, 5, [0]);
-      const c = randInt(-5, 5);
-      const d = randInt(-5, 5);
-      const fn = `${a}*t^3 + ${b}*t^2 + ${c}*t + ${d}`;
-      return {
-        functionStr: fn,
-        question: `A particle moves according to s(t) = ${formatTerm(a)}t³ ${formatTerm(b)}t² ${formatTerm(c)}t ${formatTerm(d)}. At what time t does the particle change direction? (Round to 2 decimal places)`,
-        answer: 0, // computed below
-        tolerance: 0.05,
-        hint: 'The particle changes direction when velocity changes sign. Find v(t) = s\'(t), then find where v(t) = 0 and check sign change.',
-        type: 'direction-change' as const,
-        coeffs: [a, b, c, d],
-      };
-    },
-  ];
-  const p = templates[0]();
-  // For s(t) = at³ + bt² + ct + d, v(t) = 3at² + 2bt + c
-  // Direction change at roots of v(t) where sign changes
-  const [a, b, c] = p.coeffs;
-  const vA = 3 * a;
-  const vB = 2 * b;
-  const vC = c;
-  const disc = vB * vB - 4 * vA * vC;
-  let answer = 0;
-  if (disc >= 0) {
-    const sq = Math.sqrt(disc);
-    const r1 = (-vB + sq) / (2 * vA);
-    const r2 = (-vB - sq) / (2 * vA);
-    // pick the root where sign actually changes (for cubic with a≠0, both roots are direction changes)
-    answer = Math.abs(r1) < Math.abs(r2) ? r1 : r2;
-  }
-  return { ...p, answer };
+  let a = 0;
+  let b = 0;
+  let c = 0;
+  let d = 0;
+  let discriminant = -1;
+
+  // A direction-change problem needs two distinct real velocity roots.
+  // Reject coefficients that produce no real roots or a repeated root.
+  do {
+    a = randInt(-3, 3, [0]);
+    b = randInt(-5, 5, [0]);
+    c = randInt(-5, 5);
+    d = randInt(-5, 5);
+    discriminant = (2 * b) ** 2 - 4 * (3 * a) * c;
+  } while (discriminant <= 0);
+
+  const fn = `${a}*t^3 + ${b}*t^2 + ${c}*t + ${d}`;
+  const sq = Math.sqrt(discriminant);
+  const r1 = (-(2 * b) + sq) / (2 * 3 * a);
+  const r2 = (-(2 * b) - sq) / (2 * 3 * a);
+  const answer = Math.abs(r1) < Math.abs(r2) ? r1 : r2;
+
+  return {
+    functionStr: fn,
+    question: `A particle moves according to s(t) = ${formatTerm(a)}t³ ${formatTerm(b)}t² ${formatTerm(c)}t ${formatTerm(d)}. At what time t does the particle change direction? (Round to 2 decimal places)`,
+    answer,
+    tolerance: 0.05,
+    hint: 'The particle changes direction when velocity changes sign. Find v(t) = s\'(t), then find where v(t) = 0 and check sign change.',
+    type: 'direction-change',
+  };
 }
 
 function randInt(min: number, max: number, exclude: number[] = []): number {
-  let val;
+  let val: number;
   do {
     val = Math.floor(Math.random() * (max - min + 1)) + min;
   } while (exclude.includes(val));

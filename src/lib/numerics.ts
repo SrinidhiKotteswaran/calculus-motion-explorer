@@ -1,18 +1,34 @@
 export type DiffMethod = 'forward' | 'backward' | 'central';
 
+function validateStep(h: number): void {
+  if (!Number.isFinite(h) || h === 0) {
+    throw new Error('Step size h must be a finite non-zero number.');
+  }
+}
+
+function validatePartitionCount(n: number): void {
+  if (!Number.isInteger(n) || n <= 0) {
+    throw new Error('The number of partitions n must be a positive integer.');
+  }
+}
+
 export function forwardDifference(fn: (t: number) => number, t: number, h: number): number {
+  validateStep(h);
   return (fn(t + h) - fn(t)) / h;
 }
 
 export function backwardDifference(fn: (t: number) => number, t: number, h: number): number {
+  validateStep(h);
   return (fn(t) - fn(t - h)) / h;
 }
 
 export function centralDifference(fn: (t: number) => number, t: number, h: number): number {
+  validateStep(h);
   return (fn(t + h) - fn(t - h)) / (2 * h);
 }
 
 export function numericalDerivative(fn: (t: number) => number, t: number, h: number, method: DiffMethod = 'central'): number {
+  validateStep(h);
   switch (method) {
     case 'forward': return forwardDifference(fn, t, h);
     case 'backward': return backwardDifference(fn, t, h);
@@ -75,7 +91,6 @@ export function compareMethods(
   }));
 }
 
-// Riemann sum methods
 export type RiemannMethod = 'left' | 'right' | 'midpoint' | 'trapezoid';
 
 export function riemannSum(
@@ -85,6 +100,7 @@ export function riemannSum(
   n: number,
   method: RiemannMethod
 ): number {
+  validatePartitionCount(n);
   const dt = (b - a) / n;
   let sum = 0;
   switch (method) {
@@ -120,6 +136,7 @@ export function getRiemannRects(
   n: number,
   method: RiemannMethod
 ): RiemannRect[] {
+  validatePartitionCount(n);
   const dt = (b - a) / n;
   const rects: RiemannRect[] = [];
   switch (method) {
@@ -171,8 +188,8 @@ export function integrationErrorData(
   });
 }
 
-// Numerical integration via Simpson's rule (for exact comparison)
 export function simpsonsRule(fn: (t: number) => number, a: number, b: number, n = 1000): number {
+  validatePartitionCount(n);
   if (n % 2 !== 0) n++;
   const h = (b - a) / n;
   let sum = fn(a) + fn(b);
