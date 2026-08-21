@@ -19,6 +19,7 @@ export default tseslint.config(
       'react-refresh': reactRefresh,
     },
     rules: {
+      // Hooks rules catch lifecycle mistakes that can otherwise be subtle at runtime.
       ...reactHooks.configs.recommended.rules,
       'react-refresh/only-export-components': [
         'warn',
