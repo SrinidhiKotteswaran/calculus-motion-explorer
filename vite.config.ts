@@ -11,6 +11,7 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
+  // lucide-react is excluded from dependency pre-bundling for stable client loading.
   optimizeDeps: {
     exclude: ['lucide-react'],
   },
