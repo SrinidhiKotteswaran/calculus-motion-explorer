@@ -26,5 +26,6 @@
     "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true
   },
+  /* Application code is intentionally scoped to src. */
   "include": ["src"]
 }
