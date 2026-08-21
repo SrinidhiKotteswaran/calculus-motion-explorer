@@ -4,6 +4,8 @@ An interactive calculus tool I made to help visualize derivatives, motion, numer
 
 **Live site:** [calculus-motion-explorer-axfuj2ixr-srinidhi-kotteswaran.vercel.app](https://calculus-motion-explorer-axfuj2ixr-srinidhi-kotteswaran.vercel.app/)
 
+> 🚧 Motion Explorer is still a work in progress; the project is actively evolving as new calculus experiments are added.
+
 ## What is Motion Explorer?
 
 I made Motion Explorer because I wanted to be able to *see* what we were doing in calculus instead of just solving problems on paper.
