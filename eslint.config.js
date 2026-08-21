@@ -24,6 +24,8 @@ export default tseslint.config(
         'warn',
         { allowConstantExport: true },
       ],
+      // Console output is useful while developing interactive visualizations.
+      'no-console': 'warn',
     },
   }
 );
