@@ -4,7 +4,7 @@ import { Math as MathTex } from './Math';
 import { Panel, SectionTitle, FunctionInput, Slider, Button, StatCard, Label } from './ui';
 import { PRESETS } from '../lib/useCalculus';
 import { COLORS } from '../lib/colors';
-import { parse, makeEvaluator, nthDerivative, simplify, toLatex } from '../lib/mathEngine';
+import { parse, makeEvaluator } from '../lib/mathEngine';
 import { getRiemannRects, riemannSum, simpsonsRule, type RiemannMethod } from '../lib/numerics';
 
 export function IntegrateMode() {
