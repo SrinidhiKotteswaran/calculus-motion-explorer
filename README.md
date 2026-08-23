@@ -23,31 +23,44 @@ There are six interactive laboratories:
 
 ## Screenshots
 
+A look at Motion Explorer's main interactive modes.
+
 ### Explore
 
-![Explore](screenshots/explore.png)
+Interactive visualization of a function and its derivatives.
+
+![Explore — interactive function visualization](screenshots/explore.png)
 
 ### Secant → Tangent
 
-![Secant → Tangent](screenshots/secant-tangent.png)
+Visualizing the limiting process behind the derivative.
+
+![Secant → Tangent — visualizing the derivative](screenshots/secant-tangent.png)
 
 ### Numerics
 
-![Numerics](screenshots/numerics.png)
+Exploring numerical differentiation and approximation error.
+
+![Numerics — numerical differentiation](screenshots/numerics.png)
 
 ### Analyze
 
-![Analyze](screenshots/analyze.png)
+Automatically investigating roots, extrema, inflection points, monotonicity, and concavity.
+
+![Analyze — calculus analysis tools](screenshots/analyze.png)
 
 ### Integrate
 
-![Integrate](screenshots/integrate.png)
+Visualizing numerical integration and accumulated area.
+
+![Integrate — numerical integration](screenshots/integrate.png)
 
 ### Challenge
 
-![Challenge](screenshots/challenge.png)
+Testing calculus intuition through interactive problems.
 
-> Final portfolio screenshots and the short demonstration video will be added after the application capture is finished.
+![Challenge — interactive calculus problem](screenshots/challenge.png)
+
 
 ## The technical core
 
