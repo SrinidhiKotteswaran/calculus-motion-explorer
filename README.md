@@ -23,13 +23,19 @@ There are six interactive laboratories:
 
 ## Screenshots
 
-A look at Motion Explorer's main interactive modes.
+A look at Motion Explorer across its interactive laboratories, themes, and screen sizes.
 
 ### Explore
 
 Interactive visualization of a function and its derivatives.
 
 ![Explore — interactive function visualization](screenshots/explore.png)
+
+### Explore — Light Mode
+
+The same laboratory in the light theme.
+
+![Explore — light mode](screenshots/white-explore.png)
 
 ### Secant → Tangent
 
@@ -61,6 +67,17 @@ Testing calculus intuition through interactive problems.
 
 ![Challenge — interactive calculus problem](screenshots/challenge.png)
 
+### Responsive Design
+
+Motion Explorer also adapts its interactive interface to smaller screens rather than treating mobile as an afterthought.
+
+#### Mobile Explore
+
+![Motion Explorer — mobile Explore view](screenshots/mobile-explore.png)
+
+#### Mobile Numerics
+
+![Motion Explorer — mobile Numerics view](screenshots/mobile-numerics.png)
 
 ## The technical core
 
