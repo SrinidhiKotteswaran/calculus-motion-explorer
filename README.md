@@ -1,22 +1,25 @@
 # Motion Explorer
 
-An interactive calculus tool I made to help visualize derivatives, motion, numerical methods, and integration.
+An interactive calculus laboratory I built to make derivatives, motion, numerical methods, analysis, and integration something you can **experiment with**, not just calculate.
 
-**Live site:** [calculus-motion-explorer-axfuj2ixr-srinidhi-kotteswaran.vercel.app](https://calculus-motion-explorer-axfuj2ixr-srinidhi-kotteswaran.vercel.app/)
+**Live site:** https://calculus-motion-explorer-axfuj2ixr-srinidhi-kotteswaran.vercel.app/
 
+## Why I built it
 
-## What is Motion Explorer?
+I wanted to be able to *see* what we were doing in calculus instead of only solving problems on paper.
 
-I made Motion Explorer because I wanted to be able to *see* what we were doing in calculus instead of just solving problems on paper.
+That idea changed the project as I built it. A graph can show a result, but an experiment lets you change an assumption and watch the result respond. Motion Explorer grew around that idea: shrink `h` and watch a secant become a tangent; change `h` far enough and watch floating-point error come back; change a function and see its derivatives and motion change with it.
 
-There are currently six parts:
+## What is inside
 
-* **Explore** — see position, velocity, acceleration, and higher derivatives
-* **Secant → Tangent** — watch the secant line approach the tangent line as `h` gets smaller
-* **Numerics** — compare different ways of approximating derivatives
-* **Analyze** — find critical points, increasing/decreasing intervals, concavity, and inflection points
-* **Integrate** — experiment with Riemann sums and compare them to an actual integral
-* **Challenge** — generate calculus problems involving derivatives and motion
+There are six interactive laboratories:
+
+- **Explore** — position, velocity, acceleration, jerk, and animated particle motion
+- **Secant → Tangent** — numerical difference quotients, convergence, and exact symbolic derivatives
+- **Numerics** — forward, backward, and central differences plus floating-point error analysis
+- **Analyze** — critical points, increasing/decreasing intervals, concavity, and inflection points
+- **Integrate** — Riemann sums and numerical integration comparisons
+- **Challenge** — procedurally generated calculus and motion problems
 
 ## Screenshots
 
@@ -44,67 +47,112 @@ There are currently six parts:
 
 ![Challenge](screenshots/challenge.png)
 
-## How I started it
+> Final portfolio screenshots and the short demonstration video will be added after the application capture is finished.
 
-The first version of this project was actually pretty different.
+## The technical core
 
-I originally made a small Python app using Streamlit, SymPy, NumPy, and Plotly. It mainly focused on position/velocity graphs, derivatives, and tangent lines.
+One of the main things I built myself is the symbolic math engine in `src/lib/mathEngine.ts`.
 
-That version helped me figure out what I actually wanted the project to do. Once I started adding more ideas, though, I wanted more control over the UI and the interactions, so I decided to rebuild it as a web app.
+The engine turns an expression into an **abstract syntax tree (AST)** using a custom tokenizer and recursive-descent parser. The same tree can then be numerically evaluated or transformed by a recursive symbolic differentiator.
 
-The current version is written in React and TypeScript with Vite.
+It implements calculus rules including:
 
-**Original Python prototype:** [calculus-motion-visualizer](https://github.com/SrinidhiKotteswaran/calculus-motion-visualizer)
+- sum and difference rules
+- product and quotient rules
+- constant-power and general power rules
+- chain-rule forms for supported functions
+- trigonometric and inverse-trigonometric derivatives
+- hyperbolic, exponential, logarithmic, and square-root derivatives
+- expression simplification after differentiation
 
-I kept the two repositories separate because I like being able to look back at the original version and see how the project changed.
+The original prototype used SymPy. Rebuilding this part in TypeScript made me understand the machinery behind the symbolic operations instead of treating a CAS as a black box.
 
-## A little about how it works
+**Architecture:** [`docs/MATH-ENGINE.md`](docs/MATH-ENGINE.md)
 
-Some of the main files are:
+## Numerical experiments
 
-* `src/lib/mathEngine.ts` — parsing functions, evaluating them, and symbolic differentiation
-* `src/lib/numerics.ts` — numerical differentiation and error calculations
-* `src/lib/analysis.ts` — critical points, intervals, and concavity
-* `src/components/Graph.tsx` — graphing
-* `src/components/ExploreMode.tsx` — position/velocity/acceleration visualization
-* `src/components/SecantTangentMode.tsx` — secant and tangent lines
-* `src/components/NumericsMode.tsx` — numerical differentiation
-* `src/components/AnalyzeMode.tsx` — derivative and concavity analysis
-* `src/components/IntegrateMode.tsx` — Riemann sums
-* `src/components/ChallengeMode.tsx` — generated calculus problems
+The Numerics laboratory is deliberately more than a calculator. It compares forward, backward, and central differences and plots error against step size on a log-log scale.
+
+The interesting part is the U-shaped error curve: decreasing `h` initially improves the approximation, but eventually floating-point cancellation dominates. The best step size is a balance between truncation error and round-off error.
+
+The repository also includes a repeatable math-engine benchmark:
+
+```bash
+npm run benchmark:math
+```
+
+See [`docs/BENCHMARKS.md`](docs/BENCHMARKS.md).
+
+## How I built it
+
+Motion Explorer started as a small Python/Streamlit prototype using SymPy, NumPy, and Plotly. That version focused on position/velocity graphs, derivatives, and tangent lines.
+
+As the idea grew, I rebuilt it as a React/TypeScript/Vite application so I could control the interaction more directly. From there, the project evolved from a motion visualizer into a collection of computational calculus experiments.
+
+The build history, design changes, and lessons from that process are documented in [`docs/BUILD-JOURNAL.md`](docs/BUILD-JOURNAL.md).
+
+**Original Python prototype:** https://github.com/SrinidhiKotteswaran/calculus-motion-visualizer
+
+## Project structure
+
+- `src/lib/mathEngine.ts` — parsing, AST evaluation, symbolic differentiation, simplification
+- `src/lib/numerics.ts` — numerical differentiation and error calculations
+- `src/lib/analysis.ts` — roots, critical points, intervals, and concavity
+- `src/components/Graph.tsx` — graphing
+- `src/components/ExploreMode.tsx` — motion visualization
+- `src/components/SecantTangentMode.tsx` — secant/tangent experiment
+- `src/components/NumericsMode.tsx` — numerical differentiation laboratory
+- `src/components/AnalyzeMode.tsx` — calculus analysis
+- `src/components/IntegrateMode.tsx` — numerical integration
+- `src/components/ChallengeMode.tsx` — generated problems
+
+## Verification
+
+The repository includes a focused verification suite for the symbolic engine:
+
+```bash
+npm run test:math
+```
+
+The checks cover representative symbolic derivatives, numerical evaluation, invalid expressions, and domain failures.
+
+Before a release, I also run:
+
+```bash
+npm run typecheck
+npm run lint
+npm run build
+```
+
+## Known limitations
+
+Motion Explorer is an educational computational tool, not a general-purpose computer algebra system. Numerical methods have finite-precision and sampling limitations, and some symbolic expressions have domain restrictions or non-differentiable points.
+
+I keep these limitations explicit because understanding where an algorithm fails is part of understanding the algorithm.
+
+See [`docs/LIMITATIONS.md`](docs/LIMITATIONS.md).
 
 ## Technologies
 
-* React
-* TypeScript
-* Vite
-* Tailwind CSS
-* KaTeX
+- React
+- TypeScript
+- Vite
+- Tailwind CSS
+- KaTeX
 
-The original prototype used:
-
-* Python
-* Streamlit
-* SymPy
-* NumPy
-* Plotly
-
-## One thing I found interesting
-
-The numerical differentiation section ended up being one of my favorite parts to work on.
-
-It compares forward, backward, and central differences and lets you see how the error changes as the step size `h` changes. I originally expected that making `h` smaller would just keep making the approximation better, but that's not what happens forever. Eventually floating-point errors start to matter.
-
-The Secant → Tangent section came from a similar idea. I wanted to make the definition of a derivative feel more intuitive by actually watching the secant line approach the tangent line.
-
-Those experiments are a big part of why the project grew beyond the original motion visualizer.
+The original prototype used Python, Streamlit, SymPy, NumPy, and Plotly.
 
 ## Development
 
-This project is still a work in progress.
+```bash
+npm install
+npm run dev
+```
 
-I didn't start with the current version planned out. I started with a small Python prototype, figured out what I liked, rebuilt it as a web app, and kept adding things as I learned more calculus and programming.
+Then open the local Vite URL shown in the terminal.
 
-I'm mainly using the project to get better at numerical methods, interactive visualizations, and building things that actually do something with the math I'm learning.
+## Version
 
-If I add new features, I'll probably keep experimenting with ways to make calculus concepts easier to play around with rather than just adding more traditional problem-solving tools.
+**v1.0.0** — first stable milestone of the rebuilt web application.
+
+See [`CHANGELOG.md`](CHANGELOG.md) for the feature summary.
