@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { Graph } from './Graph';
 import { Math as MathTex } from './Math';
 import { Panel, SectionTitle, FunctionInput, Slider, Button, StatCard, Label } from './ui';
 import { PRESETS } from '../lib/useCalculus';
