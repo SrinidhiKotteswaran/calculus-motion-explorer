@@ -23,61 +23,75 @@ There are six interactive laboratories:
 
 ## Screenshots
 
-A look at Motion Explorer across its interactive laboratories, themes, and screen sizes.
+A visual tour of Motion Explorer's interactive laboratories, themes, and responsive interface.
 
-### Explore
+### Core experience
+
+#### Explore
 
 Interactive visualization of a function and its derivatives.
 
-![Explore — interactive function visualization](screenshots/explore.png)
+<img src="screenshots/explore.png" alt="Motion Explorer Explore mode" width="900">
 
-### Explore — Light Mode
-
-The same laboratory in the light theme.
-
-![Explore — light mode](screenshots/white-explore.png)
-
-### Secant → Tangent
+#### Secant → Tangent
 
 Visualizing the limiting process behind the derivative.
 
-![Secant → Tangent — visualizing the derivative](screenshots/secant-tangent.png)
+<img src="screenshots/secant-tangent.png" alt="Motion Explorer Secant to Tangent mode" width="900">
 
-### Numerics
+#### Numerics
 
-Exploring numerical differentiation and approximation error.
+Comparing numerical differentiation methods and approximation error.
 
-![Numerics — numerical differentiation](screenshots/numerics.png)
+<img src="screenshots/numerics.png" alt="Motion Explorer Numerics mode" width="900">
 
-### Analyze
+#### Analyze
 
-Automatically investigating roots, extrema, inflection points, monotonicity, and concavity.
+Investigating roots, extrema, inflection points, monotonicity, and concavity.
 
-![Analyze — calculus analysis tools](screenshots/analyze.png)
+<img src="screenshots/analyze.png" alt="Motion Explorer Analyze mode" width="900">
 
-### Integrate
+#### Integrate
 
 Visualizing numerical integration and accumulated area.
 
-![Integrate — numerical integration](screenshots/integrate.png)
+<img src="screenshots/integrate.png" alt="Motion Explorer Integrate mode" width="900">
 
-### Challenge
+#### Challenge
 
-Testing calculus intuition through interactive problems.
+Testing calculus intuition through procedurally generated interactive problems.
 
-![Challenge — interactive calculus problem](screenshots/challenge.png)
+<img src="screenshots/challenge.png" alt="Motion Explorer Challenge mode" width="900">
 
-### Responsive Design
+### Themes
 
-Motion Explorer also adapts its interactive interface to smaller screens rather than treating mobile as an afterthought.
+Motion Explorer supports both dark and light themes.
 
-#### Mobile Explore
+<table>
+  <tr>
+    <td align="center"><strong>Dark</strong></td>
+    <td align="center"><strong>Light</strong></td>
+  </tr>
+  <tr>
+    <td><img src="screenshots/explore.png" alt="Explore mode in dark theme" width="430"></td>
+    <td><img src="screenshots/white-explore.png" alt="Explore mode in light theme" width="430"></td>
+  </tr>
+</table>
 
-![Motion Explorer — mobile Explore view](screenshots/mobile-explore.png)
+### Responsive design
 
-#### Mobile Numerics
+The interface adapts to smaller screens while keeping the graphing and controls usable.
 
-![Motion Explorer — mobile Numerics view](screenshots/mobile-numerics.png)
+<table>
+  <tr>
+    <td align="center"><strong>Mobile Explore</strong></td>
+    <td align="center"><strong>Mobile Numerics</strong></td>
+  </tr>
+  <tr>
+    <td><img src="screenshots/mobile-explore.png" alt="Motion Explorer Explore mode on mobile" width="300"></td>
+    <td><img src="screenshots/mobile-numerics.png" alt="Motion Explorer Numerics mode on mobile" width="300"></td>
+  </tr>
+</table>
 
 ## The technical core
 
