@@ -13,6 +13,7 @@ function derivativeAt(expression: string, t: number): number {
 
 const cases: Array<[string, number, number]> = [
   ['t^3', 2, 12],
+  ['-t^2', 3, -6],
   ['sin(t)', 0.7, Math.cos(0.7)],
   ['cos(t)', 0.7, -Math.sin(0.7)],
   ['exp(t)', 0.3, Math.exp(0.3)],
@@ -29,6 +30,10 @@ for (const [expression, t, expected] of cases) {
 
 const evaluations: Array<[string, number, number]> = [
   ['2t + 1', 3, 7],
+  ['-t^2', 3, -9],
+  ['(-t)^2', 3, 9],
+  ['t^-2', 2, 0.25],
+  ['2^3^2', 0, 512],
   ['2pi', 0, 2 * Math.PI],
   ['sqrt(9)', 0, 3],
   ['|t - 3|', 5, 2],
