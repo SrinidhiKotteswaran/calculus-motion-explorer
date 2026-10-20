@@ -1,16 +1,15 @@
 import { useEffect, useRef } from 'react';
 
 // Lightweight LaTeX renderer using KaTeX
-let katexLoaded = false;
-let katexLib: any = null;
+type KatexRenderer = typeof import('katex').default;
+let katexLib: KatexRenderer | null = null;
 
-async function loadKatex() {
-  if (katexLoaded) return katexLib;
-  katexLoaded = true;
-  // @ts-ignore
-  const katex = await import('katex');
-  katexLib = katex.default;
-  return katexLib;
+async function loadKatex(): Promise<KatexRenderer> {
+  if (katexLib) return katexLib;
+  const module = await import('katex');
+  const renderer = module.default;
+  katexLib = renderer;
+  return renderer;
 }
 
 interface MathProps {
