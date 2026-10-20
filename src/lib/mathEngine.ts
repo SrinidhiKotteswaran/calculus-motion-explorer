@@ -42,7 +42,7 @@ function tokenize(input: string): string[] {
   while (i < input.length) {
     const c = input[i];
     if (/[0-9.]/.test(c)) {
-      const match = input.slice(i).match(/^(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:[eE][+-]?\\d+)?/);
+      const match = input.slice(i).match(/^(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?/);
       if (!match) throw new ParseError(`Invalid number at position ${i}`);
       const num = match[0];
       i += num.length;
