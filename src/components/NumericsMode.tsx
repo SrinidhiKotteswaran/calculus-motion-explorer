@@ -4,8 +4,10 @@ import { Math as MathTex } from './Math';
 import { Panel, SectionTitle, FunctionInput, Slider, Button, StatCard, Label } from './ui';
 import { PRESETS } from '../lib/useCalculus';
 import { COLORS } from '../lib/colors';
-import { parse, makeEvaluator, nthDerivative, toLatex, simplify } from '../lib/mathEngine';
+import { parse, makeEvaluator, nthDerivative, simplify } from '../lib/mathEngine';
 import { numericalDerivative, generateErrorData, compareMethods, type DiffMethod } from '../lib/numerics';
+
+const T_RANGE: [number, number] = [-5, 5];
 
 function formatNumber(value: number, digits = 8): string { return Number.isFinite(value) ? value.toFixed(digits) : 'undefined'; }
 function formatExponential(value: number, digits = 3): string { return Number.isFinite(value) ? value.toExponential(digits) : 'undefined'; }
@@ -22,25 +24,24 @@ export function NumericsMode() {
       const fn = makeEvaluator(ast);
       const derivAst = simplify(nthDerivative(ast, 1));
       const deriv = makeEvaluator(derivAst);
-      return { fn, deriv, derivLatex: toLatex(derivAst), error: null };
+      return { fn, deriv, error: null };
     } catch (e: unknown) {
-      return { fn: () => NaN, deriv: () => NaN, derivLatex: '', error: e instanceof Error ? e.message : 'Invalid expression' };
+      return { fn: () => NaN, deriv: () => NaN, error: e instanceof Error ? e.message : 'Invalid expression' };
     }
   }, [input]);
 
-  const { fn, deriv, derivLatex, error } = parsed;
+  const { fn, deriv, error } = parsed;
   const errorData = useMemo(() => generateErrorData(fn, deriv, t0, method), [fn, deriv, t0, method]);
   const comparisonData = useMemo(() => compareMethods(fn, deriv, t0), [fn, deriv, t0]);
   const numericalResult = numericalDerivative(fn, t0, h, method);
   const exactResult = deriv(t0);
   const currentError = Number.isFinite(numericalResult) && Number.isFinite(exactResult) ? Math.abs(numericalResult - exactResult) : NaN;
   const relativeError = Number.isFinite(currentError) && Number.isFinite(exactResult) && Math.abs(exactResult) > 1e-15 ? currentError / Math.abs(exactResult) : NaN;
-  const tRange: [number, number] = [-5, 5];
 
   const yDomain = useMemo(() => {
     let min = Infinity, max = -Infinity;
     for (let i = 0; i <= 300; i++) {
-      const tv = tRange[0] + (i / 300) * (tRange[1] - tRange[0]);
+      const tv = T_RANGE[0] + (i / 300) * (T_RANGE[1] - T_RANGE[0]);
       const y = fn(tv);
       if (Number.isFinite(y)) { min = Math.min(min, y); max = Math.max(max, y); }
     }
@@ -72,7 +73,7 @@ export function NumericsMode() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <Panel>
           <SectionTitle subtitle="The function and its derivatives at the selected point.">Function View</SectionTitle>
-          <Graph curves={[{ fn, color: COLORS.position, width: 2.5 }, { fn: deriv, color: COLORS.velocity, width: 2, dashArray: '5 3' }]} markers={Number.isFinite(fn(t0)) ? [{ t: t0, y: fn(t0), color: COLORS.selected, size: 5 }] : []} vLines={[{ t: t0, color: COLORS.selected }]} xDomain={tRange} yDomain={yDomain} xLabel="t" yLabel="f(t), f'(t)" height={240} />
+          <Graph curves={[{ fn, color: COLORS.position, width: 2.5 }, { fn: deriv, color: COLORS.velocity, width: 2, dashArray: '5 3' }]} markers={Number.isFinite(fn(t0)) ? [{ t: t0, y: fn(t0), color: COLORS.selected, size: 5 }] : []} vLines={[{ t: t0, color: COLORS.selected }]} xDomain={T_RANGE} yDomain={yDomain} xLabel="t" yLabel="f(t), f'(t)" height={240} />
           <div className="flex items-center gap-4 mt-2 text-xs"><div className="flex items-center gap-1.5"><div className="w-4 h-0.5" style={{ background: COLORS.position }} /><span className="text-secondary">f(t)</span></div><div className="flex items-center gap-1.5"><div className="w-4 h-0.5 border-t-2 border-dashed" style={{ borderColor: COLORS.velocity }} /><span className="text-secondary">f'(t) exact</span></div></div>
         </Panel>
 
