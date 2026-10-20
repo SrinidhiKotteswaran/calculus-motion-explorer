@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 import { Play, Pause, RotateCcw, Sun, Moon } from 'lucide-react';
-import { useTheme } from './ThemeProvider';
+import { useTheme } from './useTheme';
 
 export function Panel({ children, className = '' }: { children: ReactNode; className?: string }) {
   return <div className={`bg-card border border-default rounded-lg p-5 ${className}`}>{children}</div>;
