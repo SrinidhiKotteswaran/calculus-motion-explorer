@@ -34,6 +34,8 @@ const evaluations: Array<[string, number, number]> = [
   ['(-t)^2', 3, 9],
   ['t^-2', 2, 0.25],
   ['2^3^2', 0, 512],
+  ['1e-3 + 1', 0, 1.001],
+  ['1e+3 + 1', 0, 1001],
   ['2pi', 0, 2 * Math.PI],
   ['sqrt(9)', 0, 3],
   ['|t - 3|', 5, 2],
@@ -43,7 +45,7 @@ for (const [expression, t, expected] of evaluations) {
   approx(makeEvaluator(parse(expression))(t), expected, 1e-8);
 }
 
-for (const invalid of ['', 'sin(', 't^^2', 'hello@world']) {
+for (const invalid of ['', 'sin(', 't^^2', 'hello@world', '1.2.3', '1e', '.']) {
   assert.throws(() => parse(invalid), `expected ${invalid} to be rejected`);
 }
 
