@@ -102,30 +102,21 @@ class Parser {
     return left;
   }
   parseTerm(): Ast {
-    let left = this.parseFactor();
+    let left = this.parseUnary();
     while (true) {
       const t = this.peek();
       if (t === '*') {
         this.consume();
-        left = { type: 'binop', op: '*', left, right: this.parseFactor() };
+        left = { type: 'binop', op: '*', left, right: this.parseUnary() };
       } else if (t === '/') {
         this.consume();
-        left = { type: 'binop', op: '/', left, right: this.parseFactor() };
+        left = { type: 'binop', op: '/', left, right: this.parseUnary() };
       } else if (t && !'+-*/)^|'.includes(t) && t !== undefined) {
         // implicit multiplication: number, variable, function, or open paren
-        left = { type: 'binop', op: '*', left, right: this.parseFactor() };
+        left = { type: 'binop', op: '*', left, right: this.parseUnary() };
       } else {
         break;
       }
-    }
-    return left;
-  }
-  parseFactor(): Ast {
-    let left = this.parseUnary();
-    while (this.peek() === '^') {
-      this.consume();
-      const right = this.parseUnary();
-      left = { type: 'binop', op: '^', left, right };
     }
     return left;
   }
@@ -138,7 +129,18 @@ class Parser {
       this.consume();
       return this.parseUnary();
     }
-    return this.parsePrimary();
+    return this.parsePower();
+  }
+  parsePower(): Ast {
+    const left = this.parsePrimary();
+    if (this.peek() === '^') {
+      this.consume();
+      // Parse the exponent as a unary expression so negative exponents work
+      // and chained powers associate to the right (a^b^c = a^(b^c)).
+      const right = this.parseUnary();
+      return { type: 'binop', op: '^', left, right };
+    }
+    return left;
   }
   parsePrimary(): Ast {
     const t = this.peek();
