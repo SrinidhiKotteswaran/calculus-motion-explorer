@@ -160,7 +160,7 @@ export function Graph({
     } else {
       onHover(null);
     }
-  }, [onHover, xMin, xRange, plotW, padding.left]);
+  }, [onHover, xMin, xMax, xRange, plotW, padding.left]);
 
   const handleMouseLeave = useCallback(() => {
     if (onHover) onHover(null);
