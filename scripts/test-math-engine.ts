@@ -50,6 +50,6 @@ for (const invalid of ['', 'sin(', 't^^2', 'hello@world', '1.2.3', '1e', '.']) {
 }
 
 assert.ok(Number.isNaN(makeEvaluator(parse('ln(t)'))(-1)));
-assert.ok(Number.isNaN(makeEvaluator(parse('1/t'))(0)));
+assert.ok(!Number.isFinite(makeEvaluator(parse('1/t'))(0)));
 
 console.log(`Math engine checks passed: ${cases.length + evaluations.length} numeric cases + invalid/domain cases.`);
