@@ -1,8 +1,5 @@
-import { useState, useEffect, useCallback, createContext, ReactNode } from 'react';
-
-type Theme = 'dark' | 'light';
-interface ThemeCtx { theme: Theme; toggle: () => void; }
-const ThemeContext = createContext<ThemeCtx>({ theme: 'dark', toggle: () => {} });
+import { useState, useEffect, useCallback, type ReactNode } from 'react';
+import { ThemeContext, type Theme } from './theme-context';
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setTheme] = useState<Theme>('dark');
