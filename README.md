@@ -1,202 +1,144 @@
 # Motion Explorer
 
-An interactive calculus laboratory I built to make derivatives, motion, numerical methods, analysis, and integration something you can **experiment with**, not just calculate.
+**An interactive calculus laboratory for experimenting with derivatives, motion, numerical methods, analysis, and integration.**
 
-**Live site:** https://calculus-motion-explorer-axfuj2ixr-srinidhi-kotteswaran.vercel.app/
+[**Open the live demo**](https://calculus-motion-explorer-axfuj2ixr-srinidhi-kotteswaran.vercel.app/) · [Source code](https://github.com/SrinidhiKotteswaran/calculus-motion-explorer)
 
-## Why I built it
+I started Motion Explorer because I wanted to see what calculus was *doing*, not only calculate an answer on paper. It grew from a Python prototype into a React/TypeScript application where changing a function or a numerical parameter lets you investigate how the result responds.
 
-I wanted to be able to *see* what we were doing in calculus instead of only solving problems on paper.
+## Explore the labs
 
-That idea changed the project as I built it. A graph can show a result, but an experiment lets you change an assumption and watch the result respond. Motion Explorer grew around that idea: shrink `h` and watch a secant become a tangent; change `h` far enough and watch floating-point error come back; change a function and see its derivatives and motion change with it.
-
-## What is inside
-
-There are six interactive laboratories:
-
-- **Explore** — position, velocity, acceleration, jerk, and animated particle motion
-- **Secant → Tangent** — numerical difference quotients, convergence, and exact symbolic derivatives
-- **Numerics** — forward, backward, and central differences plus floating-point error analysis
-- **Analyze** — critical points, increasing/decreasing intervals, concavity, and inflection points
-- **Integrate** — Riemann sums and numerical integration comparisons
-- **Challenge** — procedurally generated calculus and motion problems
+| Lab | What you can investigate |
+|---|---|
+| **Explore** | Position, velocity, acceleration, jerk, and animated particle motion |
+| **Secant → Tangent** | Difference quotients, convergence toward a tangent, and symbolic derivatives |
+| **Numerics** | Forward, backward, and central differences; approximation error as the step size changes |
+| **Analyze** | Roots, critical points, increasing/decreasing intervals, concavity, and inflection points |
+| **Integrate** | Riemann sums and numerical integration |
+| **Challenge** | Procedurally generated calculus and motion problems |
 
 ## Screenshots
 
-A visual tour of Motion Explorer's interactive laboratories, themes, and responsive interface.
+### Explore
+See a function and its derivatives together in an interactive motion visualization.
 
-### Core experience
+<img src="screenshots/explore.png" alt="Motion Explorer Explore lab" width="900">
 
-#### Explore
+### Secant → Tangent
+Investigate how a secant slope approaches the tangent slope as the interval shrinks.
 
-Interactive visualization of a function and its derivatives.
+<img src="screenshots/secant-tangent.png" alt="Motion Explorer secant-to-tangent lab" width="900">
 
-<img src="screenshots/explore.png" alt="Motion Explorer Explore mode" width="900">
+### Numerical differentiation
+Compare finite-difference methods and examine approximation error.
 
-#### Secant → Tangent
+<img src="screenshots/numerics.png" alt="Motion Explorer numerical methods lab" width="900">
 
-Visualizing the limiting process behind the derivative.
+### Calculus analysis and integration
+<img src="screenshots/analyze.png" alt="Motion Explorer analysis lab" width="49%">
+<img src="screenshots/integrate.png" alt="Motion Explorer integration lab" width="49%">
 
-<img src="screenshots/secant-tangent.png" alt="Motion Explorer Secant to Tangent mode" width="900">
+### Generated challenges
+<img src="screenshots/challenge.png" alt="Motion Explorer challenge lab" width="900">
 
-#### Numerics
-
-Comparing numerical differentiation methods and approximation error.
-
-<img src="screenshots/numerics.png" alt="Motion Explorer Numerics mode" width="900">
-
-#### Analyze
-
-Investigating roots, extrema, inflection points, monotonicity, and concavity.
-
-<img src="screenshots/analyze.png" alt="Motion Explorer Analyze mode" width="900">
-
-#### Integrate
-
-Visualizing numerical integration and accumulated area.
-
-<img src="screenshots/integrate.png" alt="Motion Explorer Integrate mode" width="900">
-
-#### Challenge
-
-Testing calculus intuition through procedurally generated interactive problems.
-
-<img src="screenshots/challenge.png" alt="Motion Explorer Challenge mode" width="900">
-
-### Themes
-
-Motion Explorer supports both dark and light themes.
+The interface also includes light and dark themes and mobile layouts.
 
 <table>
   <tr>
-    <td align="center"><strong>Dark</strong></td>
-    <td align="center"><strong>Light</strong></td>
-  </tr>
-  <tr>
-    <td><img src="screenshots/explore.png" alt="Explore mode in dark theme" width="430"></td>
-    <td><img src="screenshots/white-explore.png" alt="Explore mode in light theme" width="430"></td>
-  </tr>
-</table>
-
-### Responsive design
-
-The interface adapts to smaller screens while keeping the graphing and controls usable.
-
-<table>
-  <tr>
+    <td align="center"><strong>Light theme</strong></td>
     <td align="center"><strong>Mobile Explore</strong></td>
-    <td align="center"><strong>Mobile Numerics</strong></td>
   </tr>
   <tr>
-    <td><img src="screenshots/mobile-explore.png" alt="Motion Explorer Explore mode on mobile" width="300"></td>
-    <td><img src="screenshots/mobile-numerics.png" alt="Motion Explorer Numerics mode on mobile" width="300"></td>
+    <td><img src="screenshots/white-explore.png" alt="Motion Explorer light theme" width="100%"></td>
+    <td><img src="screenshots/mobile-explore.png" alt="Motion Explorer on a mobile screen" width="100%"></td>
   </tr>
 </table>
 
-## The technical core
+## The technical core: a custom math engine
 
-One of the main things I built myself is the symbolic math engine in `src/lib/mathEngine.ts`.
+The engine in `src/lib/mathEngine.ts` turns supported mathematical expressions into an **abstract syntax tree (AST)** using a tokenizer and recursive-descent parser. It evaluates expressions numerically and transforms the tree to calculate symbolic derivatives and simplify the resulting expressions.
 
-The engine turns an expression into an **abstract syntax tree (AST)** using a custom tokenizer and recursive-descent parser. The same tree can then be numerically evaluated or transformed by a recursive symbolic differentiator.
+Implemented rules include:
 
-It implements calculus rules including:
+- Sum and difference
+- Product and quotient
+- Constant-power and general-power forms
+- Chain-rule forms for supported functions
+- Trigonometric and inverse-trigonometric functions
+- Hyperbolic, exponential, logarithmic, and square-root derivatives
+- Expression simplification after differentiation
 
-- sum and difference rules
-- product and quotient rules
-- constant-power and general power rules
-- chain-rule forms for supported functions
-- trigonometric and inverse-trigonometric derivatives
-- hyperbolic, exponential, logarithmic, and square-root derivatives
-- expression simplification after differentiation
+The original prototype relied on SymPy for symbolic operations. Rebuilding the expression-processing workflow in TypeScript let me work directly with parsing, tree traversal, differentiation rules, and simplification.
 
-The original prototype used SymPy. Rebuilding this part in TypeScript made me understand the machinery behind the symbolic operations instead of treating a CAS as a black box.
-
-**Architecture:** [`docs/MATH-ENGINE.md`](docs/MATH-ENGINE.md)
+**Technical notes:** [Math engine architecture](docs/MATH-ENGINE.md) · [Known limitations](docs/LIMITATIONS.md)
 
 ## Numerical experiments
 
-The Numerics laboratory is deliberately more than a calculator. It compares forward, backward, and central differences and plots error against step size on a log-log scale.
+The Numerics lab compares forward, backward, and central finite differences. By plotting error against step size, it exposes a useful numerical-analysis trade-off: reducing the step initially improves the approximation, but eventually floating-point cancellation can dominate.
 
-The interesting part is the U-shaped error curve: decreasing `h` initially improves the approximation, but eventually floating-point cancellation dominates. The best step size is a balance between truncation error and round-off error.
-
-The repository also includes a repeatable math-engine benchmark:
+A repeatable benchmark is available with:
 
 ```bash
 npm run benchmark:math
 ```
 
-See [`docs/BENCHMARKS.md`](docs/BENCHMARKS.md).
+See [benchmark notes](docs/BENCHMARKS.md).
 
-## How I built it
+## How the project evolved
 
-Motion Explorer started as a small Python/Streamlit prototype using SymPy, NumPy, and Plotly. That version focused on position/velocity graphs, derivatives, and tangent lines.
+Motion Explorer began as a Python/Streamlit prototype using SymPy, NumPy, and Plotly. That version focused on position/velocity graphs, derivatives, and tangent lines. I then rebuilt it as a React/TypeScript/Vite application and expanded it into a set of interactive calculus labs, including a custom expression parser and symbolic differentiation engine.
 
-As the idea grew, I rebuilt it as a React/TypeScript/Vite application so I could control the interaction more directly. From there, the project evolved from a motion visualizer into a collection of computational calculus experiments.
-
-The build history, design changes, and lessons from that process are documented in [`docs/BUILD-JOURNAL.md`](docs/BUILD-JOURNAL.md).
-
-**Original Python prototype:** https://github.com/SrinidhiKotteswaran/calculus-motion-visualizer
+- [Original Python prototype](https://github.com/SrinidhiKotteswaran/calculus-motion-visualizer)
+- [Build journal](docs/BUILD-JOURNAL.md)
 
 ## Project structure
 
-- `src/lib/mathEngine.ts` — parsing, AST evaluation, symbolic differentiation, simplification
+- `src/lib/mathEngine.ts` — tokenization, parsing, AST evaluation, symbolic differentiation, and simplification
 - `src/lib/numerics.ts` — numerical differentiation and error calculations
 - `src/lib/analysis.ts` — roots, critical points, intervals, and concavity
 - `src/components/Graph.tsx` — graphing
 - `src/components/ExploreMode.tsx` — motion visualization
 - `src/components/SecantTangentMode.tsx` — secant/tangent experiment
-- `src/components/NumericsMode.tsx` — numerical differentiation laboratory
+- `src/components/NumericsMode.tsx` — numerical methods lab
 - `src/components/AnalyzeMode.tsx` — calculus analysis
 - `src/components/IntegrateMode.tsx` — numerical integration
 - `src/components/ChallengeMode.tsx` — generated problems
 
+## Run locally
+
+Requires Node.js and npm.
+
+```bash
+git clone https://github.com/SrinidhiKotteswaran/calculus-motion-explorer.git
+cd calculus-motion-explorer
+npm install
+npm run dev
+```
+
+Open the local URL printed by Vite.
+
 ## Verification
 
-The repository includes a focused verification suite for the symbolic engine:
+The repository includes a focused math-engine check and a benchmark script:
 
 ```bash
 npm run test:math
-```
-
-The checks cover representative symbolic derivatives, numerical evaluation, invalid expressions, and domain failures.
-
-Before a release, I also run:
-
-```bash
+npm run benchmark:math
 npm run typecheck
 npm run lint
 npm run build
 ```
 
+These commands are available for local verification; their presence in this README is not a claim that every command was run for every commit.
+
 ## Known limitations
 
-Motion Explorer is an educational computational tool, not a general-purpose computer algebra system. Numerical methods have finite-precision and sampling limitations, and some symbolic expressions have domain restrictions or non-differentiable points.
+Motion Explorer is an educational computational tool, not a general-purpose computer algebra system or arbitrary-precision numerical package. Its expression language covers a defined set of forms; symbolic transformations do not prove algebraic equivalence in all cases; numerical root finding and sampled graphs can miss narrow or pathological behavior; and real-valued domain restrictions still matter.
 
-I keep these limitations explicit because understanding where an algorithm fails is part of understanding the algorithm.
+I keep these limitations visible because understanding where an algorithm can fail is part of understanding the algorithm. See [Technical limitations and failure analysis](docs/LIMITATIONS.md).
 
-See [`docs/LIMITATIONS.md`](docs/LIMITATIONS.md).
+## Built with
 
-## Technologies
+React · TypeScript · Vite · Tailwind CSS · KaTeX
 
-- React
-- TypeScript
-- Vite
-- Tailwind CSS
-- KaTeX
-
-The original prototype used Python, Streamlit, SymPy, NumPy, and Plotly.
-
-## Development
-
-```bash
-npm install
-npm run dev
-```
-
-Then open the local Vite URL shown in the terminal.
-
-## Version
-
-**v1.0.0** — first stable milestone of the rebuilt web application.
-
-See [`CHANGELOG.md`](CHANGELOG.md) for the feature summary.
+The original prototype used Python · Streamlit · SymPy · NumPy · Plotly
