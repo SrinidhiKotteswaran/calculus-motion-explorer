@@ -42,23 +42,15 @@ function tokenize(input: string): string[] {
   while (i < input.length) {
     const c = input[i];
     if (/[0-9.]/.test(c)) {
-      let num = '';
-      while (i < input.length && /[0-9.]/.test(input[i])) num += input[i++];
-      if (input[i] === '.') {
-        num += input[i++];
-        while (i < input.length && /[0-9.]/.test(input[i])) num += input[i++];
+      const match = input.slice(i).match(/^(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:[eE][+-]?\\d+)?/);
+      if (!match) throw new ParseError(`Invalid number at position ${i}`);
+      const num = match[0];
+      i += num.length;
+      if (input[i] === '.' || input[i] === 'e' || input[i] === 'E') {
+        throw new ParseError(`Invalid number near: ${input.slice(i)}`);
       }
-      if (input[i] === 'e' || input[i] === 'E') {
-        let j = i + 1;
-        if (input[j] === '+' || input[j] === '-') j++;
-        if (/[0-9]/.test(input[j] || '')) {
-          num += input[i++];
-          while (i < input.length && /[0-9+\-]/.test(input[i]) && (input[i] !== 'e' && input[i] !== 'E')) {
-            // stop at next letter
-            if (/[a-zA-Z]/.test(input[i])) break;
-            num += input[i++];
-          }
-        }
+      if (!Number.isFinite(Number(num))) {
+        throw new ParseError(`Number is outside the supported range: ${num}`);
       }
       tokens.push(num);
     } else if (/[a-zA-Z]/.test(c)) {
