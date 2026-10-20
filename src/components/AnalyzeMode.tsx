@@ -7,6 +7,8 @@ import { COLORS } from '../lib/colors';
 import { parse, makeEvaluator, nthDerivative, toLatex, simplify } from '../lib/mathEngine';
 import { findCriticalPoints, findInflectionPoints, findIncreasingDecreasing, findConcavity } from '../lib/analysis';
 
+const T_RANGE: [number, number] = [-5, 5];
+
 export function AnalyzeMode() {
   const [input, setInput] = useState('t^3 - 4*t^2 + 2*t');
   const parsed = useMemo(() => {
@@ -21,22 +23,21 @@ export function AnalyzeMode() {
     }
   }, [input]);
   const { fn, d1, d2, d1Latex, d2Latex, error } = parsed;
-  const tRange: [number, number] = [-5, 5];
 
   const analysis = useMemo(() => {
     if (error) return null;
     return {
-      criticalPoints: findCriticalPoints(fn, d1, d2, tRange[0], tRange[1]),
-      inflectionPoints: findInflectionPoints(fn, d2, tRange[0], tRange[1]),
-      intervals: findIncreasingDecreasing(d1, tRange[0], tRange[1]),
-      concavity: findConcavity(d2, tRange[0], tRange[1]),
+      criticalPoints: findCriticalPoints(fn, d1, d2, T_RANGE[0], T_RANGE[1]),
+      inflectionPoints: findInflectionPoints(fn, d2, T_RANGE[0], T_RANGE[1]),
+      intervals: findIncreasingDecreasing(d1, T_RANGE[0], T_RANGE[1]),
+      concavity: findConcavity(d2, T_RANGE[0], T_RANGE[1]),
     };
   }, [fn, d1, d2, error]);
 
   const yDomain = useMemo(() => {
     let min = Infinity, max = -Infinity;
     for (let i = 0; i <= 300; i++) {
-      const y = fn(tRange[0] + (i / 300) * (tRange[1] - tRange[0]));
+      const y = fn(T_RANGE[0] + (i / 300) * (T_RANGE[1] - T_RANGE[0]));
       if (Number.isFinite(y)) { min = Math.min(min, y); max = Math.max(max, y); }
     }
     if (!Number.isFinite(min) || !Number.isFinite(max)) return [-5, 5] as [number, number];
@@ -58,14 +59,14 @@ export function AnalyzeMode() {
       </Panel>
       <Panel>
         <SectionTitle subtitle="Critical points (max/min) and inflection points are automatically detected and labeled.">Function with Critical Points</SectionTitle>
-        <Graph curves={[{ fn, color: COLORS.position, width: 2.5 }]} regions={concavityRegions} markers={[...criticalPoints.map((cp) => ({ t: cp.t, y: cp.value, color: cp.type === 'max' ? COLORS.error : cp.type === 'min' ? COLORS.velocity : COLORS.neutral, label: cp.type === 'max' ? 'max' : cp.type === 'min' ? 'min' : undefined, size: 6 })), ...inflectionPoints.map((ip) => ({ t: ip.t, y: ip.value, color: COLORS.warning, label: 'infl', size: 4 }))]} xDomain={tRange} yDomain={yDomain} xLabel="t" yLabel="s(t)" height={320} />
+        <Graph curves={[{ fn, color: COLORS.position, width: 2.5 }]} regions={concavityRegions} markers={[...criticalPoints.map((cp) => ({ t: cp.t, y: cp.value, color: cp.type === 'max' ? COLORS.error : cp.type === 'min' ? COLORS.velocity : COLORS.neutral, label: cp.type === 'max' ? 'max' : cp.type === 'min' ? 'min' : undefined, size: 6 })), ...inflectionPoints.map((ip) => ({ t: ip.t, y: ip.value, color: COLORS.warning, label: 'infl', size: 4 }))]} xDomain={T_RANGE} yDomain={yDomain} xLabel="t" yLabel="s(t)" height={320} />
         <div className="flex items-center gap-4 mt-2 text-xs flex-wrap"><div className="flex items-center gap-1.5"><div className="w-2.5 h-2.5 rounded-full" style={{ background: COLORS.error }} /><span className="text-secondary">Local max</span></div><div className="flex items-center gap-1.5"><div className="w-2.5 h-2.5 rounded-full" style={{ background: COLORS.velocity }} /><span className="text-secondary">Local min</span></div><div className="flex items-center gap-1.5"><div className="w-2.5 h-2.5 rounded-full" style={{ background: COLORS.warning }} /><span className="text-secondary">Inflection</span></div></div>
       </Panel>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <Panel><SectionTitle subtitle="Where s'(t) is positive, s(t) is increasing. Where negative, decreasing.">First Derivative Sign Chart</SectionTitle><SignChart intervals={intervals} color={COLORS.velocity} label="s'(t)" /><div className="mt-4 overflow-x-auto"><table className="w-full text-sm"><thead><tr className="border-b border-default"><th className="text-left py-2 px-2 text-secondary font-medium">Interval</th><th className="text-center py-2 px-2 text-secondary font-medium">s'(t)</th><th className="text-right py-2 px-2 text-secondary font-medium">Behavior</th></tr></thead><tbody>{intervals.map((iv, i) => <tr key={i} className="border-b border-default"><td className="py-1.5 px-2 font-mono text-secondary">{iv.start.toFixed(2)} &lt; t &lt; {iv.end.toFixed(2)}</td><td className="py-1.5 px-2 text-center" style={{ color: iv.sign === 'positive' ? COLORS.velocity : iv.sign === 'negative' ? COLORS.error : COLORS.neutral }}>{iv.sign === 'positive' ? '+' : iv.sign === 'negative' ? '−' : '0'}</td><td className="py-1.5 px-2 text-right text-secondary">{iv.behavior}</td></tr>)}</tbody></table></div></Panel>
         <Panel><SectionTitle subtitle="Where s''(t) is positive, s(t) is concave up. Where negative, concave down.">Concavity Sign Chart</SectionTitle><SignChart intervals={concavity.map((c) => ({ start: c.start, end: c.end, sign: c.concavity === 'up' ? 'positive' as const : c.concavity === 'down' ? 'negative' as const : 'zero' as const, behavior: c.concavity === 'up' ? 'concave up' : c.concavity === 'down' ? 'concave down' : 'linear' }))} color={COLORS.acceleration} label="s''(t)" /><div className="mt-4 overflow-x-auto"><table className="w-full text-sm"><thead><tr className="border-b border-default"><th className="text-left py-2 px-2 text-secondary font-medium">Interval</th><th className="text-center py-2 px-2 text-secondary font-medium">s''(t)</th><th className="text-right py-2 px-2 text-secondary font-medium">Concavity</th></tr></thead><tbody>{concavity.map((c, i) => <tr key={i} className="border-b border-default"><td className="py-1.5 px-2 font-mono text-secondary">{c.start.toFixed(2)} &lt; t &lt; {c.end.toFixed(2)}</td><td className="py-1.5 px-2 text-center" style={{ color: c.concavity === 'up' ? COLORS.acceleration : c.concavity === 'down' ? COLORS.warning : COLORS.neutral }}>{c.concavity === 'up' ? '+' : c.concavity === 'down' ? '−' : '0'}</td><td className="py-1.5 px-2 text-right text-secondary">{c.concavity === 'up' ? 'concave up' : c.concavity === 'down' ? 'concave down' : 'linear'}</td></tr>)}</tbody></table></div></Panel>
       </div>
-      <Panel><SectionTitle subtitle="All detected critical points with classification.">Critical Points</SectionTitle>{criticalPoints.length === 0 ? <p className="text-sm text-secondary">No critical points found in the interval [{tRange[0]}, {tRange[1]}].</p> : <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">{criticalPoints.map((cp, i) => <div key={i} className="bg-elevated border border-default rounded-md p-3"><div className="flex items-center justify-between"><span className="text-xs text-secondary uppercase tracking-wider">t = {cp.t.toFixed(3)}</span><span className="text-xs font-medium px-2 py-0.5 rounded" style={{ color: cp.type === 'max' ? COLORS.error : cp.type === 'min' ? COLORS.velocity : COLORS.neutral }}>{cp.type === 'max' ? 'Local Max' : cp.type === 'min' ? 'Local Min' : 'Stationary'}</span></div><div className="mt-2 text-sm font-mono"><span className="text-secondary">s(t) = </span><span style={{ color: COLORS.position }}>{Number.isFinite(cp.value) ? cp.value.toFixed(4) : 'undefined'}</span></div><div className="text-sm font-mono"><span className="text-secondary">s'(t) = </span><span style={{ color: COLORS.velocity }}>{Number.isFinite(cp.derivativeValue) ? cp.derivativeValue.toFixed(6) : 'undefined'}</span></div></div>)}</div>}</Panel>
+      <Panel><SectionTitle subtitle="All detected critical points with classification.">Critical Points</SectionTitle>{criticalPoints.length === 0 ? <p className="text-sm text-secondary">No critical points found in the interval [{T_RANGE[0]}, {T_RANGE[1]}].</p> : <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">{criticalPoints.map((cp, i) => <div key={i} className="bg-elevated border border-default rounded-md p-3"><div className="flex items-center justify-between"><span className="text-xs text-secondary uppercase tracking-wider">t = {cp.t.toFixed(3)}</span><span className="text-xs font-medium px-2 py-0.5 rounded" style={{ color: cp.type === 'max' ? COLORS.error : cp.type === 'min' ? COLORS.velocity : COLORS.neutral }}>{cp.type === 'max' ? 'Local Max' : cp.type === 'min' ? 'Local Min' : 'Stationary'}</span></div><div className="mt-2 text-sm font-mono"><span className="text-secondary">s(t) = </span><span style={{ color: COLORS.position }}>{Number.isFinite(cp.value) ? cp.value.toFixed(4) : 'undefined'}</span></div><div className="text-sm font-mono"><span className="text-secondary">s'(t) = </span><span style={{ color: COLORS.velocity }}>{Number.isFinite(cp.derivativeValue) ? cp.derivativeValue.toFixed(6) : 'undefined'}</span></div></div>)}</div>}</Panel>
     </div>
   );
 }
