@@ -2,7 +2,7 @@
 
 **An interactive calculus laboratory for experimenting with derivatives, motion, numerical methods, analysis, and integration.**
 
-[**Open the live demo**](https://calculus-motion-explorer-axfuj2ixr-srinidhi-kotteswaran.vercel.app/) · [Source code](https://github.com/SrinidhiKotteswaran/calculus-motion-explorer)
+[**Open the live demo**](https://calculus-motion-explorer.vercel.app/) · [Source code](https://github.com/SrinidhiKotteswaran/calculus-motion-explorer)
 
 I started Motion Explorer because I wanted to see what calculus was *doing*, not only calculate an answer on paper. It grew from a Python prototype into a React/TypeScript application where changing a function or a numerical parameter lets you investigate how the result responds.
 
