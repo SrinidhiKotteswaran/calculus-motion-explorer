@@ -15,9 +15,9 @@ This is the first stable milestone of the rebuilt web application.
 - Math-engine verification and benchmarking commands
 - Technical architecture, build-process, and limitation documentation
 
-## Verification checklist
+## Maintainer verification
 
-Before treating this release as final, run:
+Before preparing a release, run the following checks locally:
 
 ```bash
 npm run test:math
@@ -25,6 +25,8 @@ npm run typecheck
 npm run lint
 npm run build
 ```
+
+A successful production build confirms that the application bundles, but it does not replace the math-engine tests, TypeScript checks, or lint checks. Do not describe a check as passing unless it has actually been run.
 
 ## Known limitations
 
